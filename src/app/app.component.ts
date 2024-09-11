@@ -1,35 +1,18 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { HttpClient, HttpClientModule ,provideHttpClient,withFetch } from '@angular/common/http';
+import { Component} from '@angular/core';
+import { ProductDetailsComponent } from './Component/product-details.component';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
+// import { RouterOutlet } from '@angular/router';
+// import { CommonModule, JsonPipe } from '@angular/common';
+// import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule],
+  imports:[RouterOutlet,ProductDetailsComponent,CommonModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
 export class AppComponent {
-  // title = 'product';
-  productList: any [] =[];
-  product: any [] =[];
-  constructor(private http : HttpClient) { }
-
-   getProducts()
-  {
-    this.http.get("https://dummyjson.com/products").subscribe((result:any)=>{
-      // debugger;
-        this.productList = result.products;
-    }); 
-  }
-
-  getProduct(productId: number)
-  {
-    this.http.get("https://dummyjson.com/products/1").subscribe((result:any)=>{
-        this.product = result;
-        debugger;
-    }); 
-  }
 }
 
