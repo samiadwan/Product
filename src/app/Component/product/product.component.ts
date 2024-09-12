@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input ,OnInit,Output} from '@angular/core';
-import { Product } from '../../model/Class/Product';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, JsonPipe } from '@angular/common';
 import { Observable } from 'rxjs';
@@ -17,9 +16,7 @@ export class ProductComponent implements OnInit{
   prod: any;
   constructor(private route: ActivatedRoute, private http: HttpClient,private router: Router) {}
 
-    // @Output() back = new EventEmitter<void>();
     // @Input() productflag : string  = 'Details';
-    // flag : boolean = true;
     
     ngOnInit(): void {
       const id = this.route.snapshot.paramMap.get('id');
@@ -30,7 +27,7 @@ export class ProductComponent implements OnInit{
       }
     }
     goBack() {
-      this.router.navigate(['/product-details']);
+      this.router.navigate(['/products']);
     }
 
 }

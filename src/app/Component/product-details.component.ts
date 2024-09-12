@@ -4,17 +4,23 @@ import { Router} from '@angular/router';
 import { CommonModule, JsonPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductComponent } from './product/product.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, JsonPipe,ProductComponent],
+  imports: [CommonModule, FormsModule, JsonPipe, ProductComponent, MatPaginatorModule],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.css',
 })
 export class ProductDetailsComponent implements OnInit{
+    totalProducts: number = 0; 
+    pageSize: number = 10;
+    pageIndex: number = 0;
+    
     productList: any [] =[];
-    showProductDetails: boolean = false;
+  
     constructor(private http : HttpClient, private router: Router) { }
     productOBJ: any ={
       "id":0,
@@ -23,16 +29,32 @@ export class ProductDetailsComponent implements OnInit{
     }
    
     ngOnInit(): void{
-      this.getProducts();
+      this.fetchProducts(this.pageIndex, this.pageSize);
     }
-     getProducts()
-    {
-      this.http.get("https://dummyjson.com/products").subscribe((result:any)=>{
-          this.productList = result.products;
-          // const allProducts = result.products;
-          // this.productList = allProducts.slice(-10);
-      }); 
+    fetchProducts(pageIndex: number, pageSize: number): void {
+      const skip = pageIndex * pageSize;
+      const apiUrl = `https://dummyjson.com/products?limit=${pageSize}&skip=${skip}&select=brand,title`;
+      // const x = this.http.get(apiUrl); //holds observal returns .do not mak http request yet
+      this.http.get(apiUrl).subscribe((response: any) => {
+        this.productList = response.products;
+        this.totalProducts = response.total; 
+      });
     }
+    onPageChange(event: PageEvent): void {
+      debugger;
+      this.pageIndex = event.pageIndex;
+      this.pageSize = event.pageSize;
+      this.fetchProducts(this.pageIndex, this.pageSize);
+      debugger;
+    }
+    //  getProducts()
+    // {
+    //   this.http.get("https://dummyjson.com/products").subscribe((result:any)=>{
+    //       this.productList = result.products;
+    //       // const allProducts = result.products;
+    //       // this.productList = allProducts.slice(-10);
+    //   }); 
+    // }
   
     createProduct() {
       if (this.productOBJ) {
@@ -44,8 +66,6 @@ export class ProductDetailsComponent implements OnInit{
             result.brand = this.productOBJ.brand;
             result.title = this.productOBJ.title;
             this.productList[last.id] = result;                  
-            // const allProducts = result.products;
-            // this.productList = allProducts.slice(-10);
             this.productOBJ = null; 
           });
       }
@@ -71,9 +91,9 @@ export class ProductDetailsComponent implements OnInit{
     onEdit(data: any) {
       this.productOBJ = { ...data}; 
     }
-  //route
+  //route: navigate to the route component as mentioned
     viewProductDetails(id: number) {
-      this.router.navigate(['/products', id]);
+      this.router.navigate(['/product-details', id]);
     }
 
     onDelete(id: number){
@@ -81,5 +101,5 @@ export class ProductDetailsComponent implements OnInit{
         this.productList = this.productList.filter(product => product.id !== id);
       }); 
     }
-  
+   
 }
